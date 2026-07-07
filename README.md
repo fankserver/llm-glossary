@@ -1,6 +1,6 @@
 # Glossary
 
-Plain-language explanations of the terminology used in these docs (and in our related benchmarking notes). Written for someone **without** an LLM/GPU background — each entry says what the thing is and why we care about it here.
+Plain-language explanations of terminology from the world of self-hosted LLM inference and serving. Written for someone **without** an LLM/GPU background — each entry says what the thing is and why it matters in practice.
 
 Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are listed in parentheses.
 
@@ -8,7 +8,7 @@ Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are
 
 ## 1. LLM basics
 
-**LLM (Large Language Model)** — A neural network trained on huge amounts of text that generates text one small piece (token) at a time. Everything in this repo is about running ("serving") such models on our own hardware instead of using a cloud API.
+**LLM (Large Language Model)** — A neural network trained on huge amounts of text that generates text one small piece (token) at a time. Self-hosting means running ("serving") such models on your own hardware instead of using a cloud API.
 
 **Token** — The unit an LLM reads and writes. Roughly a word fragment: ~3–4 characters of English on average. "128K context" means the model can consider ~128,000 tokens of input at once. Speeds are measured in **tok/s** (tokens per second).
 
@@ -18,7 +18,7 @@ Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are
 
 **Inference** — Running a trained model to get answers (as opposed to *training* it). "Inference engine" = the software that does this efficiently (vLLM, SGLang, llama.cpp, …).
 
-**Serving** — Running a model behind an API so applications can send requests to it. What this whole repo documents.
+**Serving** — Running a model behind an API so applications can send requests to it.
 
 **Weights / parameters (params)** — The learned numbers that make up a model. "31B" = 31 billion parameters. More parameters ≈ more capable but needs more memory and compute.
 
@@ -27,8 +27,6 @@ Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are
 **Sampling / sampling parameters** — How the model picks the next token from its probability distribution. **temperature** (higher = more random), **top_p** / **top_k** (restrict choices to the most likely tokens), **greedy** (always pick the single most likely token — deterministic).
 
 **Logits** — The raw scores the model assigns to every possible next token before they're turned into probabilities.
-
-**Hallucination-adjacent terms you won't find here** — these docs are operational; quality issues are described concretely (e.g. "degraded output", "miscalibrated logit tail").
 
 ---
 
@@ -65,7 +63,7 @@ Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are
 
 **lm-head** — The model's final layer that converts its internal representation into scores over the vocabulary (i.e. "which token comes next"). Sometimes quantized separately.
 
-**Multimodal / vision model** — A model that accepts images as well as text. `--language-model-only` disables the vision part to save memory when we only need text.
+**Multimodal / vision model** — A model that accepts images as well as text. `--language-model-only` disables the vision part to save memory when only text is needed.
 
 **YaRN** — A technique to stretch a model's context window beyond what it was trained on (e.g. extending to 1M tokens).
 
@@ -112,7 +110,7 @@ Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are
 - **Drafter / speculator / draft model** — the small model doing the guessing. **Verifier** — the big model checking.
 - **Acceptance rate / accepted-per-step / eff tok/step** — how many drafted tokens the verifier accepts on average. The whole game: higher acceptance = faster. "42% acceptance, 7.33 length" = of long drafts, on average ~7 tokens survive per step.
 
-Methods you'll see in these docs:
+Common methods:
 
 **MTP (Multi-Token Prediction)** — The drafter is a small extra layer *inside* the main model (DeepSeek ships one built-in; Gemma uses a separate `-assistant` drafter checkpoint). No separate model to manage.
 
@@ -122,7 +120,7 @@ Methods you'll see in these docs:
 
 **DFlash** — A "block-diffusion" drafter (~0.8B, from z-lab): instead of guessing tokens one by one, it drafts a whole block of tokens in a single non-causal forward pass (a "denoising step"), like filling in a whole phrase at once.
 
-**DSpark** — DeepSeek's block-parallel drafting scheme built on the model's own MTP weights (knobs like `dspark_block_size`). What we currently run for DeepSeek-V4-Flash.
+**DSpark** — DeepSeek's block-parallel drafting scheme built on the model's own MTP weights (knobs like `dspark_block_size`), used with DeepSeek-V4 models.
 
 **IndexCache / skip_topk** — An upstream vLLM optimization (tracked in upgrades.md) that reuses DSA's top-k token selection across compressed-attention layers instead of recomputing it.
 
@@ -136,7 +134,7 @@ Methods you'll see in these docs:
 
 **Number formats** —
 - **BF16 / FP16** — 16-bit floats; the "full quality" baseline for inference.
-- **FP8** — 8-bit float; halves memory vs 16-bit with usually negligible quality loss. Our default for big models.
+- **FP8** — 8-bit float; halves memory vs 16-bit with usually negligible quality loss. A common default for serving big models.
 - **FP4 / NVFP4 / MXFP4 (e2m1)** — 4-bit float formats (NVFP4 = NVIDIA's, with per-16-value scaling; e2m1 = the bit layout). Very small, but quality risk is significant — blamed for one model's degraded output.
 - **INT8 / INT4** — 8-/4-bit integers.
 - **W4A16 / W8A8** — shorthand: **W**eights in 4-bit, **A**ctivations in 16-bit, etc.
@@ -154,7 +152,7 @@ Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ >
 
 **Calibration** — For post-training quantization: running sample data through the model to choose good scaling factors. Bad calibration → subtle quality bugs (e.g. a "miscalibrated logit tail" at temperature 1.0).
 
-**Quantization toolkits/formats** — **compressed-tensors (`-ct`)** (checkpoint format used by RedHatAI et al.), **AutoRound** (Intel), **AWQ**, **GPTQ**, **llm-compressor**, **modelopt** (NVIDIA TensorRT ModelOpt), **GGUF** (llama.cpp's file format, used for our CPU embedders).
+**Quantization toolkits/formats** — **compressed-tensors (`-ct`)** (checkpoint format used by RedHatAI et al.), **AutoRound** (Intel), **AWQ**, **GPTQ**, **llm-compressor**, **modelopt** (NVIDIA TensorRT ModelOpt), **GGUF** (llama.cpp's file format — see the GGUF quant types above).
 
 ---
 
@@ -178,7 +176,7 @@ Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ >
 
 **GPU generations / architectures** — NVIDIA names generations after scientists: **Ampere** (A100) → **Hopper** (H100, GH200; compute capability **sm_90**) → **Blackwell** (B200, GB200, GB10; **sm_100/sm_12x**). Kernels are often built per-generation — e.g. native FP4 math instructions exist only on Blackwell.
 
-**H100 NVL** — The Hopper GPU model in our PCAI cluster (94 GB memory, NVLink-bridge capable).
+**H100 NVL** — A Hopper-generation datacenter GPU variant (94 GB memory, NVLink-bridge capable).
 
 **SM / compute capability (sm_90, SM120, SM121a…)** — NVIDIA's version number for a GPU's instruction set. Software compiled for one may not run on another.
 
@@ -222,9 +220,9 @@ Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ >
 
 ## 9. Embeddings & RAG
 
-**Embedding** — A list of numbers (a vector) representing a text's *meaning*, so similar texts get nearby vectors. Produced by dedicated (small) embedding models — ours run on CPU.
+**Embedding** — A list of numbers (a vector) representing a text's *meaning*, so similar texts get nearby vectors. Produced by dedicated (small) embedding models, often cheap enough to run on CPU.
 
-**RAG (Retrieval-Augmented Generation)** — Look up relevant documents by embedding similarity first, then paste them into the LLM's prompt so it answers from your data. The reason we serve embedders at all.
+**RAG (Retrieval-Augmented Generation)** — Look up relevant documents by embedding similarity first, then paste them into the LLM's prompt so it answers from your data. The main reason embedding models are served alongside LLMs.
 
 **Dense / sparse / multi-vector (ColBERT) embeddings** — Three retrieval-vector flavors (bge-m3 produces all three): *dense* = one meaning vector (the OpenAI `/embeddings` kind); *sparse* = keyword-weight style; *ColBERT* = one small vector per token, matched late.
 
@@ -238,21 +236,21 @@ Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ >
 
 ## 10. Serving engines & runtimes
 
-**vLLM** — The open-source LLM serving engine we use for everything on GPU. Known for PagedAttention, continuous batching, and an OpenAI-compatible API. We run pinned nightly builds from our own image repo (**vllm-pcai**) with baked-in chat templates and parser patches.
+**vLLM** — The most widely used open-source LLM serving engine for GPUs. Known for PagedAttention, continuous batching, and an OpenAI-compatible API. Fast-moving; production setups often pin specific builds/nightlies.
 
-**SGLang** — A competing serving engine (assessed for its "Spec V2" speculative decoding; we stayed on vLLM).
+**SGLang** — A competing GPU serving engine, notable for its speculative-decoding implementation ("Spec V2").
 
-**llama.cpp** — A lightweight C++ inference engine, great on CPU; uses GGUF files. Runs one of our embedders.
+**llama.cpp** — A lightweight C++ inference engine, great on CPU; uses GGUF files.
 
-**Infinity** — A Python (torch/optimum) embedding server; runs our CPU embedders.
+**Infinity** — A Python (torch/optimum) embedding server, commonly used for CPU embedding serving.
 
 **TEI (Text Embeddings Inference)** — HuggingFace's Rust embedding server (evaluated; MKL/ONNX issues).
 
 **TensorRT-LLM / Ollama** — Other inference engines referenced for comparison (NVIDIA's optimized engine; a hobbyist-friendly local runner).
 
-**OpenAI-compatible API** — The de-facto standard HTTP API shape (`/v1/chat/completions`, `/v1/embeddings`); vLLM speaks it so any OpenAI client works against our models.
+**OpenAI-compatible API** — The de-facto standard HTTP API shape (`/v1/chat/completions`, `/v1/embeddings`); most engines speak it so any OpenAI client works against self-hosted models.
 
-**LiteLLM** — A proxy/router that presents many backends behind one OpenAI-style API with keys and quotas (used for LibreChat).
+**LiteLLM** — A proxy/router that presents many backends behind one OpenAI-style API with keys and quotas (commonly paired with chat UIs like LibreChat).
 
 **fastsafetensors / runai_streamer / safetensors** — **safetensors** is the standard safe weight-file format; the other two are fast loaders that stream weights into GPU memory at startup (model load takes minutes otherwise).
 
@@ -260,21 +258,21 @@ Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ >
 
 ## 11. Platform (PCAI / Kubernetes)
 
-**HPE PCAI (Private Cloud AI)** — The HPE appliance our GPUs live in: a managed Kubernetes cluster with a serving layer. Notable constraints: no arbitrary volume mounts, no pod logs, no SSH.
+**HPE PCAI (Private Cloud AI)** — HPE's on-prem AI appliance: a managed Kubernetes cluster with a model-serving layer. Typically locked-down (limited volume mounts, pod logs, SSH).
 
-**Kubernetes (K8s)** — The container-orchestration system underneath. Relevant vocabulary: **pod** (running container instance), **PVC** (persistent volume claim — a chunk of storage; `models-pvc` holds model weights), **RWX** (storage mountable by many pods at once), **hostPath** (mounting a node directory — mostly forbidden here), **/dev/shm** (shared-memory filesystem pods use for inter-process communication), **CRD** (custom resource definition — a K8s API extension), **Kyverno** (a policy engine that enforces/mutates cluster rules).
+**Kubernetes (K8s)** — The container-orchestration system underneath. Relevant vocabulary: **pod** (running container instance), **PVC** (persistent volume claim — a chunk of storage, e.g. for model weights), **RWX** (storage mountable by many pods at once), **hostPath** (mounting a node directory — often forbidden by cluster policy), **/dev/shm** (shared-memory filesystem pods use for inter-process communication), **CRD** (custom resource definition — a K8s API extension), **Kyverno** (a policy engine that enforces/mutates cluster rules).
 
 **KServe** — The model-serving framework on PCAI. An **InferenceService (isvc)** is one deployed model (with its URL and bearer-token **JWT** auth); a **ServingRuntime** defines the container/args used to run it; **autoscaling/replicas** control how many copies run.
 
-**MLIS** — PCAI's model-inventory API (`/api/v1/models`). Important nuance repeated in these docs: it lists *definitions*, not what is actually running right now.
+**MLIS** — PCAI's model-inventory API (`/api/v1/models`). Important nuance: it lists model *definitions*, not what is actually running right now.
 
-**aioli** — Internal name/namespace of the PCAI serving stack.
+**aioli** — Name/namespace of PCAI's serving stack.
 
-**HF / HuggingFace** — The standard hub for downloading model weights (`HF_TOKEN` = auth token; **Xet** = its newer CDN backend, observed slow from our network).
+**HF / HuggingFace** — The standard hub for downloading model weights (`HF_TOKEN` = auth token; **Xet** = its newer CDN download backend).
 
-**Engine wedge** — Our term for a serving incident where the engine silently stalls without crashing (root cause was memory swapping; related vocab: **swap-thrash**, **vm.swappiness**, **OOM-killer**, **demand-paging** — Linux memory-management behaviors that can starve the GPU process).
+**Engine wedge** — Informal term for a serving incident where the engine silently stalls without crashing (typical root cause: memory swapping; related vocab: **swap-thrash**, **vm.swappiness**, **OOM-killer**, **demand-paging** — Linux memory-management behaviors that can starve the GPU process).
 
-**frp / frpc** — A reverse-proxy tunnel tool used to expose a lab endpoint ("spark-chat") to the internet.
+**frp / frpc** — A reverse-proxy tunnel tool for exposing a machine behind NAT/firewall (e.g. a home lab serving endpoint) to the internet.
 
 ---
 
