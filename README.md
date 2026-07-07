@@ -87,6 +87,8 @@ Organized by topic; use Ctrl+F to look up a term. Synonyms and abbreviations are
 
 **KV cache (key-value cache)** — During attention, the model computes "keys" and "values" for every token; caching them means each new token only does new work instead of recomputing the whole context. This cache is the main consumer of GPU memory at long contexts — hence all the tricks (MLA, GQA, fp8 KV) to shrink it. `--kv-cache-dtype fp8` stores it in 8-bit to halve its size.
 
+**KV cache quantization (K vs V separately)** — The cache can be stored in fewer bits, like weights. The two halves are not equally sensitive: **keys** are used to compute attention scores, so quantizing K hurts quality more than quantizing **values** (which are only mixed into the output). llama.cpp therefore lets you set them independently — `-ctk` / `--cache-type-k` and `-ctv` / `--cache-type-v` — and a common recipe is a higher-precision K with a more aggressive V (e.g. K=q8_0, V=q4_0). vLLM's `--kv-cache-dtype` applies one dtype to both.
+
 **PagedAttention / paged KV** — vLLM's core idea: manage KV-cache memory in fixed-size blocks (like OS memory pages) instead of one big contiguous buffer, so memory isn't wasted. `--block-size` sets the block granularity.
 
 **Prefix caching (APC, Automatic Prefix Caching)** — If many requests share the same beginning (e.g. the same big system prompt), the engine reuses the already-computed KV cache for that shared prefix instead of re-prefilling it. Biggest single latency lever for agent workloads ("6–21× lower TTFT"). Flag: `--enable-prefix-caching`. Doesn't work for layer types that carry running state (GDN/Mamba), since there's no per-token cache to reuse.
@@ -139,6 +141,14 @@ Methods you'll see in these docs:
 - **INT8 / INT4** — 8-/4-bit integers.
 - **W4A16 / W8A8** — shorthand: **W**eights in 4-bit, **A**ctivations in 16-bit, etc.
 - **E8M0** — an 8-bit exponent-only scale format used inside MXFP4.
+
+**GGUF quant types (Q4_0, Q4_1, Q4_K_M, Q8_0, IQ2_XS, …)** — The naming scheme for quantization levels of GGUF files (llama.cpp / Ollama). Reading the name: `Q<bits>_<variant>` — the number is bits per weight, the suffix is *how* the scaling works:
+- **Q4_0 / Q5_0 / Q8_0** — the original ("legacy") scheme: weights are grouped in blocks of 32, each block stores one scale factor. Simple, slightly lossier.
+- **Q4_1 / Q5_1** — same, but each block stores a scale *and* an offset (minimum), recovering a bit more accuracy for a bit more size. So Q4_1 ≈ slightly bigger + slightly better than Q4_0.
+- **K-quants (Q3_K, Q4_K, Q5_K, Q6_K)** — the newer scheme: "super-blocks" with smarter, finer-grained scales, and *mixed* precision — important layers get more bits. The **_S / _M / _L** suffix (e.g. **Q4_K_M**) picks small/medium/large within that: how many layers get the higher-precision treatment. Q4_K_M is the common "sweet spot" recommendation.
+- **IQ-quants (IQ2_XS, IQ3_M, …)** — "importance-matrix" quants for extreme compression (≲3-bit): calibration data decides which weights deserve precision. Usable where plain Q2/Q3 would fall apart, at some CPU speed cost.
+
+Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ > K > _1 > _0 in quality. Q8_0 is near-lossless; Q4_K_M is the typical quality/size compromise; below Q3 expect visible degradation.
 
 **QAT (Quantization-Aware Training)** — The model was *trained* knowing it would be quantized, so the quantized version loses much less quality (e.g. Gemma's QAT checkpoints).
 
