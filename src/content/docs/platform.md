@@ -1,4 +1,6 @@
-# Platform (PCAI / Kubernetes)
+---
+title: "Platform (PCAI / Kubernetes)"
+---
 
 **HPE PCAI (Private Cloud AI)** — HPE's on-prem AI appliance: a managed Kubernetes cluster with a model-serving layer. Typically locked-down (limited volume mounts, pod logs, SSH).
 

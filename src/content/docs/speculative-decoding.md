@@ -1,4 +1,6 @@
-# Speculative decoding
+---
+title: "Speculative decoding"
+---
 
 **[Speculative decoding](https://arxiv.org/abs/2211.17192) (spec decode)** — A decode speed-up: a small, fast "**drafter**" guesses the next several tokens, then the big model verifies the whole guess in *one* pass. Correct guesses are accepted for free; wrong ones fall back to normal decoding. Output is identical to non-speculative decoding — it's purely faster. Configured with `--speculative-config`; **k** / `num_speculative_tokens` = how many tokens are drafted per step.
 

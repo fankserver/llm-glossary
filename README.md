@@ -6,20 +6,20 @@ Plain-language explanations of terminology from the world of self-hosted LLM inf
 
 ## Categories
 
-- [LLM basics](docs/llm-basics.md)
-- [Model architecture](docs/model-architecture.md)
-- [How inference works (prefill, decode, caching)](docs/inference.md)
-- [Speculative decoding](docs/speculative-decoding.md)
-- [Quantization](docs/quantization.md)
-- [Fine-tunes & community model names](docs/finetunes-and-model-names.md)
-- [Multi-GPU & parallelism](docs/parallelism.md)
-- [GPU hardware](docs/gpu-hardware.md)
-- [Tokens, templates & parsing](docs/tokens-templates-parsing.md)
-- [Embeddings & RAG](docs/embeddings-rag.md)
-- [Serving engines & runtimes](docs/serving-engines.md)
-- [Platform (PCAI / Kubernetes)](docs/platform.md)
-- [Monitoring & benchmarking](docs/monitoring-benchmarking.md)
-- [Common vLLM flags](docs/vllm-flags.md)
+- [LLM basics](https://fank.github.io/llm-glossary/llm-basics/)
+- [Model architecture](https://fank.github.io/llm-glossary/model-architecture/)
+- [How inference works (prefill, decode, caching)](https://fank.github.io/llm-glossary/inference/)
+- [Speculative decoding](https://fank.github.io/llm-glossary/speculative-decoding/)
+- [Quantization](https://fank.github.io/llm-glossary/quantization/)
+- [Fine-tunes & community model names](https://fank.github.io/llm-glossary/finetunes-and-model-names/)
+- [Multi-GPU & parallelism](https://fank.github.io/llm-glossary/parallelism/)
+- [GPU hardware](https://fank.github.io/llm-glossary/gpu-hardware/)
+- [Tokens, templates & parsing](https://fank.github.io/llm-glossary/tokens-templates-parsing/)
+- [Embeddings & RAG](https://fank.github.io/llm-glossary/embeddings-rag/)
+- [Serving engines & runtimes](https://fank.github.io/llm-glossary/serving-engines/)
+- [Platform (PCAI / Kubernetes)](https://fank.github.io/llm-glossary/platform/)
+- [Monitoring & benchmarking](https://fank.github.io/llm-glossary/monitoring-benchmarking/)
+- [Common vLLM flags](https://fank.github.io/llm-glossary/vllm-flags/)
 
 Synonyms and abbreviations are listed in parentheses. Terms link to a primary source (paper, spec, or docs) where one exists.
 

@@ -1,4 +1,6 @@
-# GPU hardware
+---
+title: "GPU hardware"
+---
 
 **GPU generations / architectures** — NVIDIA names generations after scientists: **Ampere** (A100) → **Hopper** (H100, GH200; compute capability **sm_90**) → **Blackwell** (B200, GB200, GB10; **sm_100/sm_12x**). Kernels are often built per-generation — e.g. native FP4 math instructions exist only on Blackwell.
 

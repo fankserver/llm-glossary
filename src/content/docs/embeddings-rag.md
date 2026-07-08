@@ -1,4 +1,6 @@
-# Embeddings & RAG
+---
+title: "Embeddings & RAG"
+---
 
 **Embedding** — A list of numbers (a vector) representing a text's *meaning*, so similar texts get nearby vectors. Produced by dedicated (small) embedding models, often cheap enough to run on CPU.
 

@@ -1,4 +1,6 @@
-# LLM basics
+---
+title: "LLM basics"
+---
 
 **LLM (Large Language Model)** — A neural network trained on huge amounts of text that generates text one small piece (token) at a time. Self-hosting means running ("serving") such models on your own hardware instead of using a cloud API.
 

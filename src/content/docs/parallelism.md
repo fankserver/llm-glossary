@@ -1,4 +1,6 @@
-# Multi-GPU & parallelism
+---
+title: "Multi-GPU & parallelism"
+---
 
 **TP (Tensor Parallelism)** — Splitting every layer's matrices across N GPUs, which then cooperate on every single token. Needs very fast GPU-to-GPU links. `--tensor-parallel-size`.
 

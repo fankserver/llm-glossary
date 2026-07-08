@@ -1,4 +1,6 @@
-# Quantization (making models smaller)
+---
+title: "Quantization (making models smaller)"
+---
 
 **Quantization (quant)** — Storing model weights (and sometimes activations/KV cache) in fewer bits than the original 16, trading a little quality for a lot less memory and often more speed. "4-bit is not free" — quality loss is real and must be validated.
 

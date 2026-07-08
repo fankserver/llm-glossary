@@ -1,4 +1,6 @@
-# Monitoring & benchmarking
+---
+title: "Monitoring & benchmarking"
+---
 
 **[Prometheus](https://prometheus.io/docs/introduction/overview/) / `/metrics` / scrape** — The standard metrics pipeline: services expose numbers at `/metrics`; Prometheus "scrapes" (fetches) them periodically. vLLM exposes KV-cache usage, request counts, etc. there.
 

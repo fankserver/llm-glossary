@@ -1,4 +1,6 @@
-# Fine-tunes & community model names
+---
+title: "Fine-tunes & community model names"
+---
 
 HuggingFace is full of community models with long, keyword-stacked names. The pattern is always the same: **base model + size + what was done to it + how it's packaged**. The vocabulary:
 
@@ -20,12 +22,12 @@ HuggingFace is full of community models with long, keyword-stacked names. The pa
 
 **Frankenmodel / upscaling / parameter expansion** — Making a model *bigger* than its base by duplicating/stacking layers, then (sometimes) healing it with more training (e.g. a 27B base sold as "40B"). The extra parameters are not new knowledge — treat capability claims skeptically.
 
-**Thinking / Reasoning (in a name)** — The fine-tune emits chain-of-thought before answering (see [CoT](model-architecture.md)). Often paired with a base that supports it natively.
+**Thinking / Reasoning (in a name)** — The fine-tune emits chain-of-thought before answering (see [CoT](../model-architecture/)). Often paired with a base that supports it natively.
 
 **RP / roleplay models** — Fine-tunes optimized for creative writing/character roleplay (a large share of the merge/uncensored scene).
 
-**imatrix (importance matrix)** — Calibration data used when making GGUF quants (the basis of [IQ-quants](quantization.md)): sample text is run through the model to measure which weights matter most, so those keep more precision. "IMatrix" in a repo name = the quants were made with one; the choice of calibration text is up to whoever made the quants. Other quant-related keywords in such names (custom dataset names, "MAX", etc.) are usually the uploader's own branding for their recipe, not standard terms.
+**imatrix (importance matrix)** — Calibration data used when making GGUF quants (the basis of [IQ-quants](../quantization/)): sample text is run through the model to measure which weights matter most, so those keep more precision. "IMatrix" in a repo name = the quants were made with one; the choice of calibration text is up to whoever made the quants. Other quant-related keywords in such names (custom dataset names, "MAX", etc.) are usually the uploader's own branding for their recipe, not standard terms.
 
-**-GGUF suffix / quant repos** — A repo name ending in `-GGUF` is not a new model: it's someone's repackaging of an existing model into GGUF quant files for llama.cpp/Ollama (one file per quant level, Q4_K_M etc. — see [Quantization](quantization.md)).
+**-GGUF suffix / quant repos** — A repo name ending in `-GGUF` is not a new model: it's someone's repackaging of an existing model into GGUF quant files for llama.cpp/Ollama (one file per quant level, Q4_K_M etc. — see [Quantization](../quantization/)).
 
 Rule of thumb: the longer the name, the further the model is from anything validated. Base-vendor releases and QAT checkpoints have benchmarks; ten-keyword merge/uncensored/frankenmodel stacks usually have only the uploader's word.

@@ -1,4 +1,6 @@
-# Tokens, templates & parsing
+---
+title: "Tokens, templates & parsing"
+---
 
 **Tokenizer** — Converts text ↔ tokens using the model's fixed **vocab** (vocabulary). The **detokenizer** converts output tokens back to text. `--tokenizer-mode` selects the implementation.
 

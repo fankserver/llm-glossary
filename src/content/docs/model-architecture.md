@@ -1,4 +1,6 @@
-# Model architecture
+---
+title: "Model architecture"
+---
 
 **[Transformer](https://arxiv.org/abs/1706.03762)** — The standard neural-network architecture behind modern LLMs. Its core mechanism is **attention** (below). Most terms in this section are variations on it.
 

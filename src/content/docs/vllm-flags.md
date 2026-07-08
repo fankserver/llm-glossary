@@ -1,4 +1,6 @@
-# Common vLLM flags (quick reference)
+---
+title: "Common vLLM flags (quick reference)"
+---
 
 | Flag | Meaning |
 |---|---|
