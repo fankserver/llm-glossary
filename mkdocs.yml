@@ -1,0 +1,51 @@
+site_name: LLM Serving Glossary
+site_description: Plain-language glossary of LLM & inference-serving terminology
+site_url: https://fank.github.io/llm-glossary/
+repo_url: https://github.com/fank/llm-glossary
+repo_name: fank/llm-glossary
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  icon:
+    edit: material/pencil
+  features:
+    - navigation.instant
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.action.view
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - LLM basics: llm-basics.md
+  - Model architecture: model-architecture.md
+  - How inference works: inference.md
+  - Speculative decoding: speculative-decoding.md
+  - Quantization: quantization.md
+  - Fine-tunes & model names: finetunes-and-model-names.md
+  - Multi-GPU & parallelism: parallelism.md
+  - GPU hardware: gpu-hardware.md
+  - Tokens, templates & parsing: tokens-templates-parsing.md
+  - Embeddings & RAG: embeddings-rag.md
+  - Serving engines & runtimes: serving-engines.md
+  - Platform (PCAI / Kubernetes): platform.md
+  - Monitoring & benchmarking: monitoring-benchmarking.md
+  - Common vLLM flags: vllm-flags.md
