@@ -4,7 +4,7 @@ title: "Speech (TTS / ASR)"
 
 Speech models are the other thing (besides [embeddings](../embeddings-rag/)) commonly self-hosted alongside LLMs — every local voice assistant is speech-in → LLM → speech-out. This section covers the serving vocabulary, not speech science.
 
-**TTS (Text-To-Speech)** — Generating spoken audio from text. Modern local TTS models are often small (1–8B) and run on the same GPU infrastructure as LLMs.
+**TTS (Text-To-Speech; speech synthesis, voice synthesis)** — Generating spoken audio from text. Modern local TTS models are often small (1–8B) and run on the same GPU infrastructure as LLMs.
 
 **STT / ASR (Speech-To-Text / Automatic Speech Recognition)** — Transcribing audio to text. The two abbreviations mean the same thing; papers say ASR, products say STT.
 
