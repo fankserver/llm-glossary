@@ -6,7 +6,7 @@ title: "Model architecture"
 
 **Attention** — The mechanism that lets the model relate each token to every other token in the context ("which earlier words matter for the next word?"). It is expensive: cost grows with context length, which is why so many variants below exist.
 
-**Dense model** — A "normal" model where *all* parameters are used for every token (e.g. "dense 30.7B" Gemma). Opposite of MoE.
+**Dense model** — A "normal" model where *all* parameters are used for every token (e.g. "dense 30.7B" [Gemma](https://arxiv.org/abs/2607.02770)). Opposite of MoE.
 
 **[MoE](https://arxiv.org/abs/1701.06538) (Mixture of Experts)** — An architecture where the model contains many small sub-networks ("experts") and a router activates only a few per token. This is why you see two sizes: "284B total / 13B active" means the model has 284B parameters on disk/in memory, but only ~13B do work per token — so it's much faster than a dense 284B model. Written as suffixes like `-A10B` ("10B active").
 

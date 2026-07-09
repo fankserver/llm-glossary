@@ -21,7 +21,7 @@ title: "Quantization (making models smaller)"
 
 Rule of thumb: higher number = better quality + bigger file; at equal bits, IQ > K > _1 > _0 in quality. Q8_0 is near-lossless; Q4_K_M is the typical quality/size compromise; below Q3 expect visible degradation.
 
-**QAT (Quantization-Aware Training)** — The model was *trained* knowing it would be quantized, so the quantized version loses much less quality (e.g. Gemma's QAT checkpoints).
+**QAT (Quantization-Aware Training)** — The model was *trained* knowing it would be quantized, so the quantized version loses much less quality (e.g. [Gemma](https://arxiv.org/abs/2607.02770)'s QAT checkpoints).
 
 **[Calibration](https://arxiv.org/abs/2311.09755)** — For post-training quantization: running sample data through the model to choose good scaling factors. Bad calibration → subtle quality bugs (e.g. a "miscalibrated logit tail" at temperature 1.0).
 
