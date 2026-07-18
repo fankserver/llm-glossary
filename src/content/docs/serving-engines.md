@@ -18,4 +18,6 @@ title: "Serving engines & runtimes"
 
 **[LiteLLM](https://docs.litellm.ai)** — A proxy/router that presents many backends behind one OpenAI-style API with keys and quotas (commonly paired with chat UIs like LibreChat).
 
+**mmap / `--no-mmap`** — llama.cpp loads GGUFs via **memory-mapping** by default: the OS pages weights in from disk on demand, so start-up is instant and memory is shared between processes. Pitfall: if the model is larger than RAM, demand-paging thrashes and the load looks like a hang — `--no-mmap` (read the file straight into memory) fixes it.
+
 **[fastsafetensors](https://arxiv.org/abs/2505.23072) / runai_streamer / safetensors** — **[safetensors](https://github.com/huggingface/safetensors)** is the standard safe weight-file format; the other two are fast loaders that stream weights into GPU memory at startup (model load takes minutes otherwise).

@@ -20,7 +20,7 @@ title: "How inference works (prefill, decode, caching)"
 
 **[Chunked prefill](https://arxiv.org/abs/2308.16369)** — Splitting a very long prompt into fixed-size chunks (e.g. 8192 tokens) processed sequentially, so one huge request doesn't stall everyone else. Flags: `--enable-chunked-prefill`, `--max-num-batched-tokens`.
 
-**[Continuous batching](https://www.usenix.org/conference/osdi22/presentation/yu)** — The engine dynamically packs many concurrent requests into each GPU step, adding/removing requests on the fly (rather than waiting for a batch to fill). `--max-num-seqs` caps concurrent requests. "**Single-stream**" benchmarks use concurrency = 1 (one request at a time) to measure best-case latency.
+**[Continuous batching](https://www.usenix.org/conference/osdi22/presentation/yu)** — The engine dynamically packs many concurrent requests into each GPU step, adding/removing requests on the fly (rather than waiting for a batch to fill). `--max-num-seqs` caps concurrent requests (llama.cpp's counterparts: `-b` = logical batch size, `-ub` = the physical micro-batch ("ubatch") actually run per GPU pass). "**Single-stream**" benchmarks use concurrency = 1 (one request at a time) to measure best-case latency.
 
 **Streaming / deltas** — Sending the answer to the client incrementally as it's generated (what makes chat UIs "type"). Each increment is a *delta*. Speculative decoding can emit several tokens per delta ("multi-token deltas"), which broke older parsers. `stream_options: {include_usage}` asks for token counts at the end of a stream.
 

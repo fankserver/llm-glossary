@@ -10,6 +10,8 @@ title: "Multi-GPU & parallelism"
 
 **[EP](https://arxiv.org/abs/2006.16668) (Expert Parallelism)** — For MoE models: splitting the experts across GPUs.
 
+**`--split-mode layer / row` (llama.cpp)** — llama.cpp's multi-GPU knob: **layer** assigns whole layers to each GPU (PP-style, works fine over plain PCIe, only one GPU computes at a time), **row** splits each matrix across GPUs (TP-style, needs fast interconnect to pay off).
+
 **[NCCL](https://developer.nvidia.com/nccl)** — NVIDIA's library for GPU-to-GPU communication (used by all the above). An **[all-reduce](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html)** is its core operation: combining partial results from all GPUs (Ring/Tree = its algorithms). vLLM variants: **custom all-reduce** (fast path over NVLink peer-to-peer), **PYNCCL**, **P2P** (direct GPU-to-GPU memory access).
 
 **torchrun** — PyTorch's launcher for multi-GPU/multi-node jobs.
