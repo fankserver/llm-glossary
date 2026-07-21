@@ -10,10 +10,14 @@ title: "Model architecture"
 
 **[MoE](https://arxiv.org/abs/1701.06538) (Mixture of Experts)** — An architecture where the model contains many small sub-networks ("experts") and a router activates only a few per token. This is why you see two sizes: "284B total / 13B active" means the model has 284B parameters on disk/in memory, but only ~13B do work per token — so it's much faster than a dense 284B model. Written as suffixes like `-A10B` ("10B active").
 
+**[LatentMoE](https://arxiv.org/abs/2601.18089) / Stable LatentMoE / Quantile Balancing** — NVIDIA's MoE variant that routes in a compressed latent space, allowing much sparser expert selection (more total experts per routed expert). **Stable LatentMoE** (Kimi K3, e.g. 16 of 896 experts active) adds **Quantile Balancing** — expert allocation derived from router-score quantiles instead of a tuned load-balancing loss; no standalone paper yet, only the K3 blog.
+
 - **[Routed / shared experts](https://arxiv.org/abs/2401.06066)** — Routed experts are chosen per token by the router; shared experts always run.
 - **Expert routing / auxiliary-loss-free routing** (`noaux_tc`, `e_score_correction_bias`, `topk_method`, `scoring_func`) — Config knobs describing *how* the router picks experts (DeepSeek-V3 style). Only matters when a bad config breaks model loading. **Hash routing** = the expert is picked by token ID instead of a learned router (used in some early layers: cheap, stable per-token paths).
 
 **[MLA](https://arxiv.org/abs/2405.04434) (Multi-head Latent Attention)** — DeepSeek's attention variant that stores a *compressed* version of the attention cache, making long contexts use far less GPU memory (e.g. 122K tokens of context in ~11 GiB instead of many times that).
+
+**Gated MLA** — MLA with a learned (sigmoid output) gate on the attention output, used for the full-attention layers in Kimi K3; the exact form is undisclosed pending the K3 tech report. Not to be confused with **[embedding-gated MLA](https://arxiv.org/abs/2509.16686)**, a separately published variant.
 
 **[GQA](https://arxiv.org/abs/2305.13245) (Grouped-Query Attention)** — A common attention optimization where several "query heads" share the same "key/value heads", shrinking the KV cache. Most modern non-DeepSeek models use it.
 
@@ -34,6 +38,10 @@ title: "Model architecture"
 **SSM (State-Space Model) / [Mamba](https://arxiv.org/abs/2312.00752) / [Mamba-2](https://arxiv.org/abs/2405.21060)** — An alternative to attention: instead of looking back at all tokens, the layer maintains a running "hidden state" that is updated token by token (like a summary it carries forward). Much cheaper for long contexts. "**[Hybrid](https://arxiv.org/abs/2403.19887)**" models interleave Mamba/SSM layers with attention layers. The serving payoff: only the attention layers keep a [KV cache](../inference/), so in a mostly-Mamba hybrid (e.g. 6 attention layers out of 52) the per-sequence cache stays near-constant as context grows — decode throughput at 256K context is about the same as at 4K, where a dense model's collapses.
 
 **[GDN](https://arxiv.org/abs/2412.06464) (Gated DeltaNet)** — Qwen's hybrid linear-attention/recurrent layer type (used in ~75% of Qwen3.5/3.6 layers). Like SSMs, it carries a running state — which has practical consequences: the state can't be checkpointed per token, so features like prefix caching and speculative-decoding rollback don't work naturally with it.
+
+**[KDA](https://arxiv.org/abs/2510.26692) (Kimi Delta Attention)** — Moonshot's linear-attention layer type (introduced in **Kimi Linear**, the bulk of Kimi K3's layers): a refined, more general Gated DeltaNet with finer-grained per-channel gating. Same running-state caveats as GDN — prefix caching needs special handling (Moonshot contributed a vLLM implementation).
+
+**AttnRes (Attention Residuals)** — [Kimi's](https://arxiv.org/abs/2603.15031) replacement for fixed residual connections: each layer attends over *earlier layers'* outputs with learned input-dependent weights instead of summing them uniformly — same problem space as hyper-connections (MHC/xHC below).
 
 **Diffusion LM (dLLM) / text diffusion** — An alternative to left-to-right generation: the model starts from a fully masked/noisy block of text and refines it over several "denoising" steps, filling in whole passages in parallel (same idea as image diffusion). Promises much faster generation; used both for full models and as a drafting trick (see DFlash under [Speculative decoding](../speculative-decoding/)).
 
