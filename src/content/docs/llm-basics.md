@@ -20,6 +20,8 @@ title: "LLM basics"
 
 **[WSD](https://arxiv.org/abs/2404.06395) (Warmup–Stable–Decay)** — The learning-rate schedule most modern pretraining reports use (MiniCPM, DeepSeek, Olmo, …): ramp up briefly, hold a constant rate for most of training, then decay sharply at the end. Unlike the older cosine schedule, the total token count doesn't need to be fixed upfront — you can keep training in the stable phase and branch off a "decayed" checkpoint whenever you want a releasable model.
 
+**Midtraining / context extension** — Training phases between pretraining and post-training: continued training on curated data (math/code/long documents) while progressively extending the context window (e.g. 32K → 128K → 256K). Model cards often report these phases separately from the main pretraining token count.
+
 **[Sampling / sampling parameters](https://arxiv.org/abs/1904.09751)** — How the model picks the next token from its probability distribution. **temperature** (higher = more random), **top_p** / **top_k** (restrict choices to the most likely tokens), **greedy** (always pick the single most likely token — deterministic).
 
 **Logits** — The raw scores the model assigns to every possible next token before they're turned into probabilities.

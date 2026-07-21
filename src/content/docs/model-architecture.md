@@ -25,6 +25,8 @@ title: "Model architecture"
 
 **[NSA](https://arxiv.org/abs/2502.11089) (Native Sparse Attention)** — DeepSeek's earlier published sparse-attention design (same family of ideas as DSA): attend only to a selected subset of tokens instead of all of them, trained natively that way rather than bolted on afterwards.
 
+**[CCA](https://arxiv.org/abs/2510.04476) (Compressed Convolutional Attention)** — Zyphra's attention variant (ZAYA1): the whole attention operation runs inside a *compressed* latent space (downproject → attend → upproject), shrinking both compute and KV cache. Same goal as MLA, but compresses the computation, not just the cache.
+
 **[SWA](https://arxiv.org/abs/2004.05150) (Sliding-Window Attention)** — Attention limited to a fixed window of recent tokens (e.g. `sliding_window=128`) instead of the whole context. Cheap, but the layer can't see far back; models mix SWA layers with full-attention layers.
 
 **[CSA](https://arxiv.org/abs/2606.19348) (Compressed Sparse Attention)** — DeepSeek-V4's attention for mid-range memory: every 4 tokens are *learned-compressed* into one KV entry (the model learns how much each token contributes), then a Lightning-Indexer-style top-k selection (as in DSA) picks only the most relevant compressed blocks to attend to. Compression + sparse retrieval.
@@ -51,7 +53,9 @@ title: "Model architecture"
 
 **[Multimodal / vision model](https://arxiv.org/abs/2304.08485)** — A model that accepts images as well as text. `--language-model-only` disables the vision part to save memory when only text is needed.
 
-**[YaRN](https://arxiv.org/abs/2309.00071)** — A technique to stretch a model's context window beyond what it was trained on (e.g. extending to 1M tokens).
+**[RoPE](https://arxiv.org/abs/2104.09864) (Rotary Position Embedding)** — The standard way modern LLMs encode *where* a token sits in the sequence: query/key vectors are rotated by an angle that depends on position. Its base frequency (`rope_theta`) determines the usable context length — context-extension tricks work by rescaling it.
+
+**[YaRN](https://arxiv.org/abs/2309.00071)** — A technique to stretch a model's context window beyond what it was trained on (e.g. extending to 1M tokens) by rescaling RoPE frequencies.
 
 **[CoT](https://arxiv.org/abs/2201.11903) (Chain of Thought) / thinking / reasoning** — The model "thinks out loud" before answering, emitting reasoning inside special tags (e.g. `<think>…</think>`). Serving-side knobs: `enable_thinking`, `reasoning_effort`, `thinking_token_budget`. The **reasoning parser** (below) strips this into a separate `reasoning` field so clients don't see it mixed into the answer.
 

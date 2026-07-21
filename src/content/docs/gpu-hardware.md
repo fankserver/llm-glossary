@@ -18,6 +18,8 @@ title: "GPU hardware"
 
 **Clustering / networking terms** (from the DGX-Spark clustering guide) — **ConnectX-7 (CX-7)**: the 200 Gb/s network card; **QSFP112/QSFP56/DAC**: port/cable types; **RoCEv2 / InfiniBand**: high-speed networking protocols for GPU clusters; **[GPU Direct RDMA](https://developer.nvidia.com/gpudirect)**: NICs writing straight into GPU memory (not supported on GB10); **C2C**: NVIDIA's chip-to-chip link between Grace and the GPU.
 
+**[MI300X](https://www.amd.com/en/products/accelerators/instinct/mi300/mi300x.html) / Instinct** — AMD's datacenter accelerator line (Instinct); the MI300X's 192 GB HBM3 per GPU (vs. 80 GB on an H100) makes big models fit on fewer cards. Runs on the ROCm stack below, not CUDA.
+
 **ROCm / HIP / gfx arch names** — AMD's counterpart stack: **ROCm** ≈ CUDA (driver + libraries), **HIP** ≈ the CUDA programming API, and **gfx906 / gfx90a / gfx1100**-style names ≈ NVIDIA's `sm_XX` compute capabilities (gfx906 = Vega20/MI50-era, gfx90a = MI200, gfx1100 = RDNA3). Same caveat as sm versions: kernels built for one arch may not exist or be slow on another — e.g. on older archs a bigger Q8_0 can outrun a smaller IQ quant because the IQ dequant kernels are expensive there; benchmark instead of assuming smaller = faster.
 
 **Kernel** — A small program that runs on the GPU (a matrix multiply, an attention step). Fast serving is mostly about having fast kernels for your exact GPU + number format.

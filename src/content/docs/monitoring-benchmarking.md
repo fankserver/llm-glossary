@@ -17,3 +17,5 @@ title: "Monitoring & benchmarking"
 **Wall-clock** — Real elapsed time (as opposed to a per-step or per-token rate).
 
 **[HumanEval](https://arxiv.org/abs/2107.03374) / [MMLU](https://arxiv.org/abs/2009.03300) / perplexity** — Model-*quality* measures: a code-generation benchmark, a broad knowledge exam, and a statistical "how surprised is the model by real text" score (lower = better). Used to check that quantization/upgrades didn't hurt quality.
+
+**[pass@k](https://arxiv.org/abs/2107.03374)** — "Model gets k attempts; does at least one pass?" — the standard scoring for code/math benchmarks. pass@1 = single-try accuracy; a big pass@k-vs-pass@1 gap means the model can solve it but is inconsistent.
